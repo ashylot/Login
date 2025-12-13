@@ -2,15 +2,13 @@ package HospitalManagementSystem;
 
 import java.util.ArrayList;
 import javax.swing.*;
-import java.awt.Color;
-import java.awt.Toolkit;
 
 public class Login {
 
     private static JTextField txtUsername;
     private static JPasswordField txtPassword;
 
-    // User (username, password, role)
+    // User storage (username, password, role)
     private static class User {
         String username;
         String password;
@@ -32,38 +30,35 @@ public class Login {
         users.add(new User("patient1", "abcdef", "Patient"));
 
         JFrame frame = new JFrame("Hospital Login");
-        frame.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\USER-PC\\Downloads\\HospitalLogo.png.png"));
-        frame.getContentPane().setBackground(new Color(192, 192, 192));
         frame.setSize(450, 290);
-        frame.getContentPane().setLayout(null);
+        frame.setLayout(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         JLabel lblUsername = new JLabel("Username:");
         lblUsername.setBounds(55, 56, 79, 14);
-        frame.getContentPane().add(lblUsername);
+        frame.add(lblUsername);
 
         txtUsername = new JTextField();
         txtUsername.setBounds(128, 53, 280, 20);
-        frame.getContentPane().add(txtUsername);
+        frame.add(txtUsername);
 
         JLabel lblPassword = new JLabel("Password:");
         lblPassword.setBounds(55, 97, 79, 14);
-        frame.getContentPane().add(lblPassword);
+        frame.add(lblPassword);
 
         txtPassword = new JPasswordField();
         txtPassword.setBounds(128, 94, 280, 20);
-        frame.getContentPane().add(txtPassword);
+        frame.add(txtPassword);
 
         // LOGIN BUTTON
         JButton btnLogin = new JButton("Login");
-        btnLogin.setBackground(new Color(255, 255, 255));
         btnLogin.setBounds(140, 140, 90, 25);
-        frame.getContentPane().add(btnLogin);
+        frame.add(btnLogin);
 
         // REGISTER BUTTON
         JButton btnRegister = new JButton("Cancel");
         btnRegister.setBounds(250, 140, 90, 25);
-        frame.getContentPane().add(btnRegister);
+        frame.add(btnRegister);
 
         // LOGIN ACTION
         btnLogin.addActionListener(e -> {
@@ -77,16 +72,21 @@ public class Login {
                     JOptionPane.showMessageDialog(frame,
                             "Login Successful!\nWelcome " + u.role + ": " + u.username);
                     
-                    // Close login window and open Hospital appointment system
+                    // Close login window and open appropriate portal
                     frame.dispose();
                     
                     try {
-                        Hospital hospitalWindow = new Hospital();
-                        hospitalWindow.setVisible(true);
+                        if (u.role.equals("Doctor")) {
+                            DoctorForm doctorWindow = new DoctorForm(u.username);
+                            doctorWindow.setVisible(true);
+                        } else {
+                            PatientForm patientWindow = new PatientForm(u.username);
+                            patientWindow.setVisible(true);
+                        }
                     } catch (Exception ex) {
                         ex.printStackTrace();
                         JOptionPane.showMessageDialog(null, 
-                            "Error opening Hospital window: " + ex.getMessage());
+                            "Error opening portal: " + ex.getMessage());
                     }
                     break;
                 }
@@ -141,16 +141,21 @@ public class Login {
             JOptionPane.showMessageDialog(frame,
                     role + " registered successfully!\nUsername: " + username);
             
-            // Close login window and open Hospital appointment system
+            // Close login window and open appropriate portal
             frame.dispose();
             
             try {
-                Hospital hospitalWindow = new Hospital();
-                hospitalWindow.setVisible(true);
+                if (role.equals("Doctor")) {
+                    DoctorForm doctorWindow = new DoctorForm(username);
+                    doctorWindow.setVisible(true);
+                } else {
+                    PatientForm patientWindow = new PatientForm(username);
+                    patientWindow.setVisible(true);
+                }
             } catch (Exception ex) {
                 ex.printStackTrace();
                 JOptionPane.showMessageDialog(null, 
-                    "Error opening Hospital window: " + ex.getMessage());
+                    "Error opening portal: " + ex.getMessage());
             }
         });
 
