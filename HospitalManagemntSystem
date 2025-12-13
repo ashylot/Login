@@ -1,0 +1,14 @@
+package HospitalManagementSystem;
+
+import java.util.ArrayList;
+
+public class HospitalSystemClass {
+
+    public static ArrayList<Doctor> doctors = new ArrayList<>();
+    public static ArrayList<Patient> patients = new ArrayList<>();
+    public static ArrayList<Appointment> appointments = new ArrayList<>();
+
+    public static void addDoctor(Doctor d) { doctors.add(d); }
+    public static void addPatient(Patient p) { patients.add(p); }
+    public static void addAppointment(Appointment a) { appointments.add(a); }
+}
