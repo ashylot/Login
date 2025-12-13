@@ -27,8 +27,12 @@ public class Login {
     public static void main(String[] args) {
 
         // Sample pre-registered users
-        users.add(new User("ashmp", "123456", "Doctor"));
-        users.add(new User("patient1", "abcdef", "Patient"));
+        users.add(new User("ash", "123456", "Doctor"));
+        users.add(new User("triciajane", "654321", "Doctor"));
+        users.add(new User("jean", "7890", "Doctor"));
+        users.add(new User("patient1", "patient1", "Patient"));
+        users.add(new User("patient2", "patient2", "Patient"));
+        users.add(new User("patient3", "patient3", "Patient"));
 
         JFrame frame = new JFrame("Hospital Login");
         frame.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\USER-PC\\Downloads\\HospitalLogo.png.png"));
