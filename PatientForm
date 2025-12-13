@@ -8,7 +8,8 @@ import java.io.PrintWriter;
 public class PatientForm extends JFrame {
 
     private static final long serialVersionUID = 1L;
-    private JTextField txtDoctorName, txtDate, txtTime;
+    private JComboBox<String> cmbDoctorName;
+    private JTextField txtDate, txtTime;
     private JTextArea txtAppointmentList;
     private String patientName;
 
@@ -37,9 +38,12 @@ public class PatientForm extends JFrame {
         lblDoctor.setBounds(30, 85, 100, 25);
         getContentPane().add(lblDoctor);
 
-        txtDoctorName = new JTextField();
-        txtDoctorName.setBounds(140, 85, 200, 25);
-        getContentPane().add(txtDoctorName);
+        // Dropdown for doctor selection
+        String[] doctors = {"Ash", "Triciajane", "Jean"};
+        cmbDoctorName = new JComboBox<>(doctors);
+        cmbDoctorName.setEditable(true); // Allow typing custom names
+        cmbDoctorName.setBounds(140, 85, 200, 25);
+        getContentPane().add(cmbDoctorName);
 
         // Date input
         JLabel lblDate = new JLabel("Date:");
@@ -96,14 +100,17 @@ public class PatientForm extends JFrame {
     }
 
     private void bookAppointment() {
-        String doctorName = txtDoctorName.getText();
+        String doctorName = (String) cmbDoctorName.getSelectedItem();
         String date = txtDate.getText();
         String time = txtTime.getText();
 
-        if (doctorName.isEmpty() || date.isEmpty() || time.isEmpty()) {
+        if (doctorName == null || doctorName.isEmpty() || date.isEmpty() || time.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please fill all fields", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
+
+        // Remove "Dr. " prefix if present for consistency
+        doctorName = doctorName.replace("Dr. ", "").trim();
 
         // Create doctor and patient objects
         Doctor d = new Doctor("D" + (HospitalSystemClass.doctors.size() + 1), doctorName, "General");
@@ -115,9 +122,10 @@ public class PatientForm extends JFrame {
 
         JOptionPane.showMessageDialog(this, 
             "Appointment booked successfully!\nWith Dr. " + doctorName + " on " + date + " at " + time);
+        cmbDoctorName.setModel(new DefaultComboBoxModel<>(new String[] {"Ash", "Triciajane", "Jean"}));
 
         // Clear fields
-        txtDoctorName.setText("");
+        cmbDoctorName.setSelectedIndex(0);
         txtDate.setText("");
         txtTime.setText("");
 
