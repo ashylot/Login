@@ -1,0 +1,199 @@
+  package HospitalManagementSystem;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+
+public class PatientForm extends JFrame {
+
+    private static final long serialVersionUID = 1L;
+    private JTextField txtDoctorName, txtDate, txtTime;
+    private JTextArea txtAppointmentList;
+    private String patientName;
+
+    public PatientForm(String username) {
+        this.patientName = username;
+        
+        setTitle("Patient Portal - " + username);
+        setSize(500, 550);
+        getContentPane().setLayout(null);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+        // Welcome message
+        JLabel lblWelcome = new JLabel("Welcome, " + username + "!");
+        lblWelcome.setFont(new Font("Tahoma", Font.BOLD, 16));
+        lblWelcome.setBounds(30, 10, 400, 30);
+        getContentPane().add(lblWelcome);
+
+        // Book Appointment Section
+        JLabel lblBooking = new JLabel("Book New Appointment");
+        lblBooking.setFont(new Font("Tahoma", Font.BOLD, 14));
+        lblBooking.setBounds(30, 50, 250, 25);
+        getContentPane().add(lblBooking);
+
+        // Doctor input
+        JLabel lblDoctor = new JLabel("Doctor Name:");
+        lblDoctor.setBounds(30, 85, 100, 25);
+        getContentPane().add(lblDoctor);
+
+        txtDoctorName = new JTextField();
+        txtDoctorName.setBounds(140, 85, 200, 25);
+        getContentPane().add(txtDoctorName);
+
+        // Date input
+        JLabel lblDate = new JLabel("Date:");
+        lblDate.setBounds(30, 120, 100, 25);
+        getContentPane().add(lblDate);
+
+        txtDate = new JTextField();
+        txtDate.setBounds(140, 120, 200, 25);
+        getContentPane().add(txtDate);
+
+        // Time input
+        JLabel lblTime = new JLabel("Time:");
+        lblTime.setBounds(30, 155, 100, 25);
+        getContentPane().add(lblTime);
+
+        txtTime = new JTextField();
+        txtTime.setBounds(140, 155, 200, 25);
+        getContentPane().add(txtTime);
+
+        JButton btnBookAppointment = new JButton("Book Appointment");
+        btnBookAppointment.setBounds(140, 195, 180, 30);
+        getContentPane().add(btnBookAppointment);
+
+        btnBookAppointment.addActionListener(e -> bookAppointment());
+
+        // Export button
+        JButton btnExport = new JButton("Export");
+        btnExport.setBounds(330, 195, 130, 30);
+        getContentPane().add(btnExport);
+        btnExport.addActionListener(e -> exportAppointments());
+
+        // My Appointments Section
+        JLabel lblMyAppointments = new JLabel("My Appointments:");
+        lblMyAppointments.setFont(new Font("Tahoma", Font.BOLD, 14));
+        lblMyAppointments.setBounds(30, 245, 200, 25);
+        getContentPane().add(lblMyAppointments);
+
+        txtAppointmentList = new JTextArea();
+        txtAppointmentList.setEditable(false);
+        txtAppointmentList.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        
+        JScrollPane scrollPane = new JScrollPane(txtAppointmentList);
+        scrollPane.setBounds(30, 280, 430, 220);
+        getContentPane().add(scrollPane);
+        
+        // Load appointments
+        updateAppointmentList();
+    }
+
+    private void bookAppointment() {
+        String doctorName = txtDoctorName.getText();
+        String date = txtDate.getText();
+        String time = txtTime.getText();
+
+        if (doctorName.isEmpty() || date.isEmpty() || time.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please fill all fields", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Create doctor and patient objects
+        Doctor d = new Doctor("D" + (HospitalSystemClass.doctors.size() + 1), doctorName, "General");
+        Patient p = new Patient("P" + (HospitalSystemClass.patients.size() + 1), patientName, 25);
+
+        HospitalSystemClass.addDoctor(d);
+        HospitalSystemClass.addPatient(p);
+        HospitalSystemClass.addAppointment(new Appointment(d, p, date + " " + time));
+
+        JOptionPane.showMessageDialog(this, 
+            "Appointment booked successfully!\nWith Dr. " + doctorName + " on " + date + " at " + time);
+
+        // Clear fields
+        txtDoctorName.setText("");
+        txtDate.setText("");
+        txtTime.setText("");
+
+        // Update list
+        updateAppointmentList();
+    }
+
+    private void updateAppointmentList() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Your Appointments:\n");
+        sb.append("=".repeat(60)).append("\n");
+        
+        int count = 0;
+        for (int i = 0; i < HospitalSystemClass.appointments.size(); i++) {
+            Appointment apt = HospitalSystemClass.appointments.get(i);
+            
+            if (apt.getPatient().getName().equalsIgnoreCase(patientName)) {
+                count++;
+                sb.append(count).append(". ");
+                sb.append("Doctor: Dr. ").append(apt.getDoctor().getName());
+                sb.append(" | DateTime: ").append(apt.getDate());
+                sb.append("\n");
+            }
+        }
+        
+        if (count == 0) {
+            sb.append("\nNo appointments yet. Book one above!\n");
+        }
+        
+        txtAppointmentList.setText(sb.toString());
+    }
+
+    private void exportAppointments() {
+        if (HospitalSystemClass.appointments.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No appointments to export!", "Warning", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        try {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Save Your Appointments");
+            fileChooser.setSelectedFile(new java.io.File("MyAppointments.txt"));
+            
+            int userSelection = fileChooser.showSaveDialog(this);
+            
+            if (userSelection == JFileChooser.APPROVE_OPTION) {
+                String filePath = fileChooser.getSelectedFile().getAbsolutePath();
+                if (!filePath.endsWith(".txt")) {
+                    filePath += ".txt";
+                }
+
+                PrintWriter writer = new PrintWriter(new FileWriter(filePath));
+                writer.println("========================================");
+                writer.println("   MY APPOINTMENTS - " + patientName);
+                writer.println("========================================");
+                writer.println();
+
+                int count = 0;
+                for (int i = 0; i < HospitalSystemClass.appointments.size(); i++) {
+                    Appointment apt = HospitalSystemClass.appointments.get(i);
+                    if (apt.getPatient().getName().equalsIgnoreCase(patientName)) {
+                        count++;
+                        writer.println(count + ". Doctor: Dr. " + apt.getDoctor().getName());
+                        writer.println("   Date & Time: " + apt.getDate());
+                        writer.println();
+                    }
+                }
+
+                writer.println("========================================");
+                writer.println("Total Appointments: " + count);
+                writer.close();
+
+                JOptionPane.showMessageDialog(this, "File exported successfully!", 
+                                            "Success", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Error exporting file: " + ex.getMessage(), 
+                                        "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public static void main(String[] args) {
+        new PatientForm("TestPatient").setVisible(true);
+    }
+}
