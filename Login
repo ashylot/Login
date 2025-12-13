@@ -2,6 +2,7 @@ package HospitalManagementSystem;
 
 import java.util.ArrayList;
 import javax.swing.*;
+import java.awt.Toolkit;
 
 public class Login {
 
@@ -26,39 +27,40 @@ public class Login {
     public static void main(String[] args) {
 
         // Sample pre-registered users
-        users.add(new User("drashlot", "123456", "Doctor"));
+        users.add(new User("ashmp", "123456", "Doctor"));
         users.add(new User("patient1", "abcdef", "Patient"));
 
         JFrame frame = new JFrame("Hospital Login");
+        frame.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\USER-PC\\Downloads\\HospitalLogo.png.png"));
         frame.setSize(450, 290);
-        frame.setLayout(null);
+        frame.getContentPane().setLayout(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         JLabel lblUsername = new JLabel("Username:");
         lblUsername.setBounds(55, 56, 79, 14);
-        frame.add(lblUsername);
+        frame.getContentPane().add(lblUsername);
 
         txtUsername = new JTextField();
         txtUsername.setBounds(128, 53, 280, 20);
-        frame.add(txtUsername);
+        frame.getContentPane().add(txtUsername);
 
         JLabel lblPassword = new JLabel("Password:");
         lblPassword.setBounds(55, 97, 79, 14);
-        frame.add(lblPassword);
+        frame.getContentPane().add(lblPassword);
 
         txtPassword = new JPasswordField();
         txtPassword.setBounds(128, 94, 280, 20);
-        frame.add(txtPassword);
+        frame.getContentPane().add(txtPassword);
 
         // LOGIN BUTTON
         JButton btnLogin = new JButton("Login");
         btnLogin.setBounds(140, 140, 90, 25);
-        frame.add(btnLogin);
+        frame.getContentPane().add(btnLogin);
 
         // REGISTER BUTTON
         JButton btnRegister = new JButton("Cancel");
         btnRegister.setBounds(250, 140, 90, 25);
-        frame.add(btnRegister);
+        frame.getContentPane().add(btnRegister);
 
         // LOGIN ACTION
         btnLogin.addActionListener(e -> {
