@@ -1,4 +1,4 @@
-  package HospitalManagementSystem;
+package HospitalManagementSystem;
 
 import javax.swing.*;
 import java.awt.*;
@@ -67,9 +67,15 @@ public class PatientForm extends JFrame {
 
         // Export button
         JButton btnExport = new JButton("Export");
-        btnExport.setBounds(330, 195, 130, 30);
+        btnExport.setBounds(330, 195, 70, 30);
         getContentPane().add(btnExport);
         btnExport.addActionListener(e -> exportAppointments());
+
+        // Logout button
+        JButton btnLogout = new JButton("Logout");
+        btnLogout.setBounds(410, 195, 80, 30);
+        getContentPane().add(btnLogout);
+        btnLogout.addActionListener(e -> logout());
 
         // My Appointments Section
         JLabel lblMyAppointments = new JLabel("My Appointments:");
@@ -190,6 +196,18 @@ public class PatientForm extends JFrame {
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Error exporting file: " + ex.getMessage(), 
                                         "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void logout() {
+        int confirm = JOptionPane.showConfirmDialog(this, 
+            "Are you sure you want to logout?", 
+            "Logout", 
+            JOptionPane.YES_NO_OPTION);
+        
+        if (confirm == JOptionPane.YES_OPTION) {
+            this.dispose();
+            Login.main(null); // Return to login
         }
     }
 
