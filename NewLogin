@@ -65,7 +65,7 @@ public class Login {
         // REGISTER BUTTON
         JButton btnRegister = new JButton("Cancel");
         btnRegister.setForeground(new Color(255, 255, 255));
-        btnRegister.setBackground(new Color(0, 0, 128));
+        btnRegister.setBackground(new Color(128, 0, 0));
         btnRegister.setBounds(250, 140, 90, 25);
         frame.getContentPane().add(btnRegister);
         
