@@ -1,4 +1,4 @@
-package HospitalManagementSystem;
+package hospi;
 
 import java.util.ArrayList;
 import java.awt.*;
@@ -27,14 +27,14 @@ public class Login {
     public static void main(String[] args) {
 
         // Sample pre-registered users
-        users.add(new User("ash", "123456", "Doctor"));
-        users.add(new User("triciajane", "654321", "Doctor"));
-        users.add(new User("jean", "7890", "Doctor"));
-        users.add(new User("patient1", "patient1", "Patient"));
+        users.add(new User("Ash", "123456", "Doctor"));
+        users.add(new User("Triciajane", "654321", "Doctor"));
+        users.add(new User("Jean", "7890", "Doctor"));
+        users.add(new User("Patient1", "patient1", "Patient"));
+        users.add(new User("Patient2", "patient2", "Patient"));
        
-
         JFrame frame = new JFrame("Hospital Login");
-        frame.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\USER-PC\\Downloads\\HospitalLogo.png.png"));
+        frame.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\Owner\\eclipse-workspace\\HospitalManagementSystem\\image\\Hospital.png."));
         frame.setSize(450, 290);
         frame.getContentPane().setLayout(null);
         frame.setLocationRelativeTo(null);
@@ -173,12 +173,10 @@ public class Login {
     }
 
 	private static Container getContentPane() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	private static void setLocationRelativeTo(Object object) {
-		// TODO Auto-generated method stub
 		
 	}
 }
