@@ -1,4 +1,4 @@
-package HospitalManagementSystem;
+package hospi;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,7 +18,7 @@ public class PatientForm extends JFrame {
     private String patientName;
 
     public PatientForm(String username) {
-        setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\USER-PC\\Downloads\\HospitalLogo.png.png"));
+    	 setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\Owner\\eclipse-workspace\\HospitalManagementSystem\\image\\Hospital.png."));
         this.patientName = username;
         
         setTitle("Patient Portal - " + username);
@@ -56,7 +56,7 @@ public class PatientForm extends JFrame {
         getContentPane().add(headerPanel);
         
         // Welcome message in header
-        JLabel lblWelcome = new JLabel("Welcome, <dynamic>!");
+        JLabel lblWelcome = new JLabel("Welcome, Dr. " + username + "!");
         lblWelcome.setFont(new Font("Tahoma", Font.BOLD, 24));
         lblWelcome.setForeground(Color.WHITE);
         lblWelcome.setBounds(leftMargin, 20, 600, 40);
@@ -182,18 +182,6 @@ public class PatientForm extends JFrame {
 
         btnBookAppointment.addActionListener(e -> bookAppointment());
 
-        // Export button
-        JButton btnExport = new JButton("Export");
-        btnExport.setFont(new Font("Tahoma", Font.BOLD, 14));
-        btnExport.setBackground(headerColor);
-        btnExport.setForeground(Color.WHITE);
-        btnExport.setFocusPainted(false);
-        btnExport.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-        btnExport.setBounds(370, 227, 120, 40);
-        btnExport.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        bookingPanel.add(btnExport);
-        btnExport.addActionListener(e -> exportAppointments());
-
         // Logout button
         JButton btnLogout = new JButton("Logout");
         btnLogout.setFont(new Font("Tahoma", Font.BOLD, 14));
@@ -201,7 +189,7 @@ public class PatientForm extends JFrame {
         btnLogout.setForeground(Color.WHITE);
         btnLogout.setFocusPainted(false);
         btnLogout.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-        btnLogout.setBounds(515, 227, 120, 40);
+        btnLogout.setBounds(1000, 25, 120, 35);
         btnLogout.setCursor(new Cursor(Cursor.HAND_CURSOR));
         bookingPanel.add(btnLogout);
         
@@ -348,54 +336,6 @@ public class PatientForm extends JFrame {
         txtAppointmentList.setText(sb.toString());
     }
 
-    private void exportAppointments() {
-        if (HospitalSystemClass.appointments.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "No appointments to export!", "Warning", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        try {
-            JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setDialogTitle("Save Your Appointments");
-            fileChooser.setSelectedFile(new java.io.File("MyAppointments.txt"));
-            
-            int userSelection = fileChooser.showSaveDialog(this);
-            
-            if (userSelection == JFileChooser.APPROVE_OPTION) {
-                String filePath = fileChooser.getSelectedFile().getAbsolutePath();
-                if (!filePath.endsWith(".txt")) {
-                    filePath += ".txt";
-                }
-
-                PrintWriter writer = new PrintWriter(new FileWriter(filePath));
-                writer.println("========================================");
-                writer.println("   MY APPOINTMENTS - " + patientName);
-                writer.println("========================================");
-                writer.println();
-
-                int count = 0;
-                for (int i = 0; i < HospitalSystemClass.appointments.size(); i++) {
-                    Appointment apt = HospitalSystemClass.appointments.get(i);
-                    if (apt.getPatient().getName().equalsIgnoreCase(patientName)) {
-                        count++;
-                        writer.println(count + ". Doctor: Dr. " + apt.getDoctor().getName());
-                        writer.println("   Date & Time: " + apt.getDate());
-                        writer.println();
-                    }
-                }
-
-                writer.println("========================================");
-                writer.println("Total Appointments: " + count);
-                writer.close();
-
-                JOptionPane.showMessageDialog(this, "File exported successfully!", 
-                                            "Success", JOptionPane.INFORMATION_MESSAGE);
-            }
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Error exporting file: " + ex.getMessage(), 
-                                        "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
 
     private void logout() {
         dispose();
