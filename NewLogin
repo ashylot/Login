@@ -1,349 +1,182 @@
 package hospi;
 
-import javax.swing.*;
+import java.util.ArrayList;
 import java.awt.*;
-import java.io.FileWriter;
-import java.io.PrintWriter;
-import java.util.Calendar;
+import javax.swing.*;
 
-public class PatientForm extends JFrame {
+public class Login {
 
-    private static final long serialVersionUID = 1L;
-    private JComboBox<String> cmbDoctorName;
-    private JComboBox<Integer> cmbYear, cmbDay;
-    private JComboBox<String> cmbMonth;
-    private JComboBox<String> cmbIllness; 
-    private JTextField txtTime;
-    private JTextArea txtAppointmentList;
-    private String patientName;
+    private static JTextField txtUsername;
+    private static JPasswordField txtPassword;
 
-    public PatientForm(String username) {
-    	 setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\Owner\\eclipse-workspace\\HospitalManagementSystem\\image\\Hospital.png."));
-        this.patientName = username;
-        
-        setTitle("Patient Portal - " + username);
-        setExtendedState(JFrame.MAXIMIZED_BOTH); // Maximize the window
-        setSize(520, 580);
-        setLocationRelativeTo(null); // Center the window
-        getContentPane().setLayout(null);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        
-      
-        getContentPane().setBackground(new Color(240, 248, 255));
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        int screenWidth = screenSize.width;
-        int screenHeight = screenSize.height;
-        
-        // Calculate margins and component sizes
-        int leftMargin = 50;
-        int topMargin = 30;
-        int labelWidth = 150;
-        int fieldWidth = Math.min(400, screenWidth - leftMargin - labelWidth - 100);
-        int verticalSpacing = 50;
-        
-        // Medical theme colors
-        Color headerColor = new Color(0, 102, 204); // Medical Blue
-        Color panelColor = new Color(255, 255, 255); // White
-        Color accentColor = new Color(46, 204, 113); // Medical Green
-        Color dangerColor = new Color(231, 76, 60); // Red
-        Color textColor = new Color(44, 62, 80); // Dark Blue Gray
-        
-        // Header Panel
-        JPanel headerPanel = new JPanel();
-        headerPanel.setBackground(headerColor);
-        headerPanel.setBounds(0, 0, screenWidth, 80);
-        headerPanel.setLayout(null);
-        getContentPane().add(headerPanel);
-        
-        // Welcome message in header
-        JLabel lblWelcome = new JLabel("Welcome, Dr. " + username + "!");
-        lblWelcome.setFont(new Font("Tahoma", Font.BOLD, 24));
-        lblWelcome.setForeground(Color.WHITE);
-        lblWelcome.setBounds(leftMargin, 20, 600, 40);
-        headerPanel.add(lblWelcome);
-        
-        // Booking Panel
-        JPanel bookingPanel = new JPanel();
-        bookingPanel.setBackground(panelColor);
-        bookingPanel.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(189, 195, 199), 2),
-            BorderFactory.createEmptyBorder(20, 20, 20, 20)
-        ));
-        bookingPanel.setLayout(null);
-        bookingPanel.setBounds(50, 95, 1180, 278);
-        getContentPane().add(bookingPanel);
+    // User storage (username, password, role)
+    private static class User {
+        String username;
+        String password;
+        String role;
 
-        // Book Appointment Section
-        JLabel lblBooking = new JLabel("Book New Appointment");
-        lblBooking.setFont(new Font("Tahoma", Font.BOLD, 18));
-        lblBooking.setForeground(headerColor);
-        lblBooking.setBounds(20, 0, 400, 35);
-        bookingPanel.add(lblBooking);
-
-        // Doctor input
-        JLabel lblDoctor = new JLabel("Doctor Name:");
-        lblDoctor.setFont(new Font("Tahoma", Font.PLAIN, 14));
-        lblDoctor.setForeground(textColor);
-        lblDoctor.setBounds(20, 46, labelWidth, 30);
-        bookingPanel.add(lblDoctor);
-
-        // Dropdown for doctor selection
-        String[] doctors = {"Dr. Ash (Pediatricians)", "Dr. Triciajane (Cardiologist)", "Dr. Jean (Ophthalmologist)"};
-        cmbDoctorName = new JComboBox<>(doctors);
-        cmbDoctorName.setEditable(true);
-        cmbDoctorName.setFont(new Font("Tahoma", Font.PLAIN, 14));
-        cmbDoctorName.setBackground(Color.WHITE);
-        cmbDoctorName.setBounds(170, 46, 400, 35);
-        bookingPanel.add(cmbDoctorName);
-
-        String[] illnesses = {
-                "Fever / Flu",
-                "Heart Related",
-                "Eye Problem"
-        };
-        
-        cmbIllness = new JComboBox<>(illnesses);
-        cmbIllness.setFont(new Font("Tahoma", Font.PLAIN, 14));
-        cmbIllness.setBounds(170, 87, 300, 35);
-        bookingPanel.add(cmbIllness);
-
-        // Date input with dropdown selectors
-        JLabel lblDate = new JLabel("Appointment Date:");
-        lblDate.setFont(new Font("Tahoma", Font.PLAIN, 14));
-        lblDate.setForeground(textColor);
-        lblDate.setBounds(20, 135, labelWidth, 30);
-        bookingPanel.add(lblDate);
-
-        // Year dropdown
-        Calendar cal = Calendar.getInstance();
-        int currentYear = cal.get(Calendar.YEAR);
-        Integer[] years = new Integer[10];
-        for (int i = 0; i < 10; i++) {
-            years[i] = currentYear + i;
-        }
-        cmbYear = new JComboBox<>(years);
-        cmbYear.setFont(new Font("Tahoma", Font.PLAIN, 14));
-        cmbYear.setBackground(Color.WHITE);
-        cmbYear.setBounds(170, 133, 120, 35);
-        bookingPanel.add(cmbYear);
-
-        // Month dropdown
-        String[] months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", 
-                          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-        cmbMonth = new JComboBox<>(months);
-        cmbMonth.setFont(new Font("Tahoma", Font.PLAIN, 14));
-        cmbMonth.setBackground(Color.WHITE);
-        cmbMonth.setBounds(300, 133, 100, 35);
-        cmbMonth.setSelectedIndex(cal.get(Calendar.MONTH));
-        bookingPanel.add(cmbMonth);
-
-        // Day dropdown
-        Integer[] days = new Integer[31];
-        for (int i = 0; i < 31; i++) {
-            days[i] = i + 1;
-        }
-        cmbDay = new JComboBox<>(days);
-        cmbDay.setFont(new Font("Tahoma", Font.PLAIN, 14));
-        cmbDay.setBackground(Color.WHITE);
-        cmbDay.setBounds(410, 133, 80, 35);
-        cmbDay.setSelectedIndex(cal.get(Calendar.DAY_OF_MONTH) - 1);
-        bookingPanel.add(cmbDay);
-
-        // Update days when month or year changes
-        cmbMonth.addActionListener(e -> updateDays());
-        cmbYear.addActionListener(e -> updateDays());
-
-        // Time input
-        JLabel lblTime = new JLabel("Appointment Time:");
-        lblTime.setFont(new Font("Tahoma", Font.PLAIN, 14));
-        lblTime.setForeground(textColor);
-        lblTime.setBounds(20, 183, labelWidth, 30);
-        bookingPanel.add(lblTime);
-
-        txtTime = new JTextField();
-        txtTime.setFont(new Font("Tahoma", Font.PLAIN, 14));
-        txtTime.setBounds(170, 181, 300, 35);
-        txtTime.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(189, 195, 199), 1),
-            BorderFactory.createEmptyBorder(5, 10, 5, 10)
-        ));
-        txtTime.setToolTipText("Format: HH:MM (e.g., 14:30)");
-        bookingPanel.add(txtTime);
-
-        JButton btnBookAppointment = new JButton("Book Appointment");
-        btnBookAppointment.setFont(new Font("Tahoma", Font.BOLD, 14));
-        btnBookAppointment.setBackground(accentColor);
-        btnBookAppointment.setForeground(Color.WHITE);
-        btnBookAppointment.setFocusPainted(false);
-        btnBookAppointment.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-        btnBookAppointment.setBounds(170, 227, 180, 40);
-        btnBookAppointment.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        bookingPanel.add(btnBookAppointment);
-
-        btnBookAppointment.addActionListener(e -> bookAppointment());
-
-        // Logout button
-        JButton btnLogout = new JButton("Logout");
-        btnLogout.setFont(new Font("Tahoma", Font.BOLD, 14));
-        btnLogout.setBackground(dangerColor);
-        btnLogout.setForeground(Color.WHITE);
-        btnLogout.setFocusPainted(false);
-        btnLogout.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-        btnLogout.setBounds(1000, 25, 120, 35);
-        btnLogout.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        bookingPanel.add(btnLogout);
-        
-        JLabel lblPatientIllness = new JLabel("Patient Illness:");
-        lblPatientIllness.setForeground(new Color(44, 62, 80));
-        lblPatientIllness.setFont(new Font("Tahoma", Font.PLAIN, 14));
-        lblPatientIllness.setBounds(20, 87, 150, 30);
-        bookingPanel.add(lblPatientIllness);
-        btnLogout.addActionListener(e -> logout());
-        
-        // Appointments Panel
-        JPanel appointmentsPanel = new JPanel();
-        appointmentsPanel.setBackground(panelColor);
-        appointmentsPanel.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(189, 195, 199), 2),
-            BorderFactory.createEmptyBorder(20, 20, 20, 20)
-        ));
-        appointmentsPanel.setLayout(null);
-        int appointmentsPanelHeight = screenHeight - 450;
-        appointmentsPanel.setBounds(leftMargin, 380, screenWidth - 2 * leftMargin, appointmentsPanelHeight);
-        getContentPane().add(appointmentsPanel);
-
-        // My Appointments Section
-        JLabel lblMyAppointments = new JLabel("My Appointments");
-        lblMyAppointments.setFont(new Font("Tahoma", Font.BOLD, 18));
-        lblMyAppointments.setForeground(headerColor);
-        lblMyAppointments.setBounds(20, 10, 300, 35);
-        appointmentsPanel.add(lblMyAppointments);
-
-        txtAppointmentList = new JTextArea();
-        txtAppointmentList.setEditable(false);
-        txtAppointmentList.setFont(new Font("Monospaced", Font.PLAIN, 14));
-        txtAppointmentList.setBackground(new Color(248, 249, 250));
-        txtAppointmentList.setForeground(textColor);
-        txtAppointmentList.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        
-        JScrollPane scrollPane = new JScrollPane(txtAppointmentList);
-        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(189, 195, 199), 1));
-        int scrollWidth = screenWidth - 2 * leftMargin - 80;
-        int scrollHeight = appointmentsPanelHeight - 80;
-        scrollPane.setBounds(20, 55, scrollWidth, scrollHeight);
-        appointmentsPanel.add(scrollPane);
-        
-        // Load appointments
-        updateAppointmentList();
-    }
-
-    private void updateDays() {
-        int year = (Integer) cmbYear.getSelectedItem();
-        int month = cmbMonth.getSelectedIndex() + 1;
-        int maxDays = getMaxDaysInMonth(year, month);
-        
-        int currentSelection = (Integer) cmbDay.getSelectedItem();
-        
-        cmbDay.removeAllItems();
-        for (int i = 1; i <= maxDays; i++) {
-            cmbDay.addItem(i);
-        }
-        
-        if (currentSelection <= maxDays) {
-            cmbDay.setSelectedItem(currentSelection);
-        } else {
-            cmbDay.setSelectedItem(maxDays);
+        User(String u, String p, String r) {
+            username = u;
+            password = p;
+            role = r;
         }
     }
 
-    private int getMaxDaysInMonth(int year, int month) {
-        Calendar cal = Calendar.getInstance();
-        cal.set(year, month - 1, 1);
-        return cal.getActualMaximum(Calendar.DAY_OF_MONTH);
-    }
-
-    private void bookAppointment() {
-        String doctorName = (String) cmbDoctorName.getSelectedItem();
-        String time = txtTime.getText();
-
-        if (doctorName == null || doctorName.isEmpty() || time.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please fill all fields", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        // Format the date
-        int year = (Integer) cmbYear.getSelectedItem();
-        int month = cmbMonth.getSelectedIndex() + 1;
-        int day = (Integer) cmbDay.getSelectedItem();
-        String date = String.format("%04d-%02d-%02d", year, month, day);
-
-        // Extract doctor name and specialty
-        String displayName = doctorName;
-        String cleanDoctorName = doctorName;
-        
-        // Remove "Dr. " prefix and specialty for database
-        if (doctorName.contains("(")) {
-            cleanDoctorName = doctorName.substring(0, doctorName.indexOf("(")).trim();
-        }
-        cleanDoctorName = cleanDoctorName.replace("Dr. ", "").trim();
-
-        // Create doctor and patient objects
-        Doctor d = new Doctor("D" + (HospitalSystemClass.doctors.size() + 1), cleanDoctorName, "General");
-        Patient p = new Patient("P" + (HospitalSystemClass.patients.size() + 1), patientName, 25);
-
-        HospitalSystemClass.addDoctor(d);
-        HospitalSystemClass.addPatient(p);
-        HospitalSystemClass.addAppointment(new Appointment(d, p, date + " " + time));
-
-        JOptionPane.showMessageDialog(this, 
-            "Appointment booked successfully!\nWith " + displayName + "\nDate: " + date + " at " + time,
-            "Success", JOptionPane.INFORMATION_MESSAGE);
-
-        // Clear fields
-        cmbDoctorName.setSelectedIndex(0);
-        Calendar cal = Calendar.getInstance();
-        cmbYear.setSelectedItem(cal.get(Calendar.YEAR));
-        cmbMonth.setSelectedIndex(cal.get(Calendar.MONTH));
-        cmbDay.setSelectedItem(cal.get(Calendar.DAY_OF_MONTH));
-        txtTime.setText("");
-
-        // Update list
-        updateAppointmentList();
-    }
-
-    private void updateAppointmentList() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Your Appointments:\n");
-        sb.append("=".repeat(60)).append("\n");
-        
-        int count = 0;
-        for (int i = 0; i < HospitalSystemClass.appointments.size(); i++) {
-            Appointment apt = HospitalSystemClass.appointments.get(i);
-            
-            if (apt.getPatient().getName().equalsIgnoreCase(patientName)) {
-                count++;
-                sb.append(count).append(". ");
-                sb.append("Doctor: Dr. ").append(apt.getDoctor().getName());
-                sb.append(" | DateTime: ").append(apt.getDate());
-                sb.append("\n");
-            }
-        }
-        
-        if (count == 0) {
-            sb.append("\nNo appointments yet. Book one above!\n");
-        }
-        
-        txtAppointmentList.setText(sb.toString());
-    }
-
-
-    private void logout() {
-        dispose();
-        Login.main(null);
-    }
-    
+    private static ArrayList<User> users = new ArrayList<>();
 
     public static void main(String[] args) {
-        new PatientForm("TestPatient").setVisible(true);
+
+        // Sample pre-registered users
+        users.add(new User("Ash", "123456", "Doctor"));
+        users.add(new User("Triciajane", "654321", "Doctor"));
+        users.add(new User("Jean", "7890", "Doctor"));
+        users.add(new User("Patient1", "patient1", "Patient"));
+        users.add(new User("Patient2", "patient2", "Patient"));
+       
+        JFrame frame = new JFrame("Hospital Login");
+        frame.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\Owner\\eclipse-workspace\\HospitalManagementSystem\\image\\Hospital.png."));
+        frame.setSize(450, 290);
+        frame.getContentPane().setLayout(null);
+        frame.setLocationRelativeTo(null);
+
+        JLabel lblUsername = new JLabel("Username:");
+        lblUsername.setBounds(55, 56, 79, 14);
+        frame.getContentPane().add(lblUsername);
+
+        txtUsername = new JTextField();
+        txtUsername.setBounds(128, 53, 280, 20);
+        frame.getContentPane().add(txtUsername);
+
+        JLabel lblPassword = new JLabel("Password:");
+        lblPassword.setBounds(55, 97, 79, 14);
+        frame.getContentPane().add(lblPassword);
+
+        txtPassword = new JPasswordField();
+        txtPassword.setBounds(128, 94, 280, 20);
+        frame.getContentPane().add(txtPassword);
+
+        // LOGIN BUTTON
+        JButton btnLogin = new JButton("Login");
+        btnLogin.setForeground(new Color(255, 255, 255));
+        btnLogin.setBackground(new Color(0, 0, 128));
+        btnLogin.setBounds(140, 140, 90, 25);
+        frame.getContentPane().add(btnLogin);
+
+        // REGISTER BUTTON
+        JButton btnRegister = new JButton("Cancel");
+        btnRegister.setForeground(new Color(255, 255, 255));
+        btnRegister.setBackground(new Color(128, 0, 0));
+        btnRegister.setBounds(250, 140, 90, 25);
+        frame.getContentPane().add(btnRegister);
+        
+
+        // LOGIN ACTION
+        btnLogin.addActionListener(e -> {
+            String username = txtUsername.getText();
+            String password = String.valueOf(txtPassword.getPassword());
+            boolean found = false;
+
+            for (User u : users) {
+                if (u.username.equals(username) && u.password.equals(password)) {
+                    found = true;
+                    JOptionPane.showMessageDialog(frame,
+                            "Login Successful!\nWelcome " + u.role + ": " + u.username);
+                    
+                    // Close login window and open appropriate portal
+                    frame.dispose();
+                    
+                    try {
+                        if (u.role.equals("Doctor")) {
+                            DoctorForm doctorWindow = new DoctorForm(u.username);
+                            doctorWindow.setVisible(true);
+                        } else {
+                            PatientForm patientWindow = new PatientForm(u.username);
+                            patientWindow.setVisible(true);
+                        }
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(null, 
+                            "Error opening portal: " + ex.getMessage());
+                    }
+                    break;
+                }
+            }
+
+            if (!found) {
+                JOptionPane.showMessageDialog(frame,
+                        "Invalid username or password",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        // REGISTER ACTION
+        btnRegister.addActionListener(e -> {
+            String username = txtUsername.getText();
+            String password = String.valueOf(txtPassword.getPassword());
+
+            if (username.isEmpty() || password.isEmpty()) {
+                JOptionPane.showMessageDialog(frame,
+                        "Please enter username and password",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Check if username already exists
+            for (User u : users) {
+                if (u.username.equals(username)) {
+                    JOptionPane.showMessageDialog(frame,
+                            "Username already exists!",
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            }
+
+            // Ask role
+            String[] roles = {"Doctor", "Patient"};
+            String role = (String) JOptionPane.showInputDialog(frame,
+                    "Select your role",
+                    "Role Selection",
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    roles,
+                    roles[0]);
+
+            if (role == null) return; // User cancelled
+
+            users.add(new User(username, password, role));
+
+            JOptionPane.showMessageDialog(frame,
+                    role + " registered successfully!\nUsername: " + username);
+            
+            // Close login window and open appropriate portal
+            frame.dispose();
+            
+            try {
+                if (role.equals("Doctor")) {
+                    DoctorForm doctorWindow = new DoctorForm(username);
+                    doctorWindow.setVisible(true);
+                } else {
+                    PatientForm patientWindow = new PatientForm(username);
+                    patientWindow.setVisible(true);
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(null, 
+                    "Error opening portal: " + ex.getMessage());
+            }
+        });
+
+        frame.setVisible(true);
     }
+
+	private static Container getContentPane() {
+		return null;
+	}
+
+	private static void setLocationRelativeTo(Object object) {
+		
+	}
 }
