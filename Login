@@ -1,8 +1,8 @@
 package HospitalManagementSystem;
 
 import java.util.ArrayList;
+import java.awt.*;
 import javax.swing.*;
-import java.awt.Toolkit;
 
 public class Login {
 
@@ -27,18 +27,17 @@ public class Login {
     public static void main(String[] args) {
 
         // Sample pre-registered users
-        users.add(new User("ash", "123456", "Doctor"));
-        users.add(new User("triciajane", "654321", "Doctor"));
-        users.add(new User("jean", "7890", "Doctor"));
-        users.add(new User("patient1", "patient1", "Patient"));
-        users.add(new User("patient2", "patient2", "Patient"));
-        users.add(new User("patient3", "patient3", "Patient"));
-
+        users.add(new User("Ash", "123456", "Doctor"));
+        users.add(new User("Triciajane", "654321", "Doctor"));
+        users.add(new User("Jean", "7890", "Doctor"));
+        users.add(new User("Patient1", "patient1", "Patient"));
+        users.add(new User("Patient2", "patient2", "Patient"));
+       
         JFrame frame = new JFrame("Hospital Login");
-        frame.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\USER-PC\\Downloads\\HospitalLogo.png.png"));
+        frame.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\Owner\\eclipse-workspace\\HospitalManagementSystem\\image\\Hospital.png."));
         frame.setSize(450, 290);
         frame.getContentPane().setLayout(null);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLocationRelativeTo(null);
 
         JLabel lblUsername = new JLabel("Username:");
         lblUsername.setBounds(55, 56, 79, 14);
@@ -58,13 +57,18 @@ public class Login {
 
         // LOGIN BUTTON
         JButton btnLogin = new JButton("Login");
+        btnLogin.setForeground(new Color(255, 255, 255));
+        btnLogin.setBackground(new Color(0, 0, 128));
         btnLogin.setBounds(140, 140, 90, 25);
         frame.getContentPane().add(btnLogin);
 
         // REGISTER BUTTON
         JButton btnRegister = new JButton("Cancel");
+        btnRegister.setForeground(new Color(255, 255, 255));
+        btnRegister.setBackground(new Color(128, 0, 0));
         btnRegister.setBounds(250, 140, 90, 25);
         frame.getContentPane().add(btnRegister);
+        
 
         // LOGIN ACTION
         btnLogin.addActionListener(e -> {
@@ -167,4 +171,12 @@ public class Login {
 
         frame.setVisible(true);
     }
+
+	private static Container getContentPane() {
+		return null;
+	}
+
+	private static void setLocationRelativeTo(Object object) {
+		
+	}
 }
