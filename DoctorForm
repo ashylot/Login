@@ -154,7 +154,7 @@ public class DoctorForm extends JFrame {
 
         btnRefresh.addActionListener(e -> updatePatientList());
         btnDone.addActionListener(e -> markAsDone());
-        btnExport.addActionListener(e -> exportToPDF());
+        btnExport.addActionListener(e -> exportPatientList());  // FIXED: Changed from exportToPDF()
 
         txtPatientList = new JTextArea();
         txtPatientList.setEditable(false);
@@ -172,14 +172,17 @@ public class DoctorForm extends JFrame {
         updatePatientList();
     }
 
-    private Object exportToPDF() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	private void updateAvailability() {
+    private void updateAvailability() {
         String status = (String) cmbAvailability.getSelectedItem();
         lblStatus.setText("Current Status: " + status);
+        
+        // Store the status in Hospital class so PatientForm can access it
+        Hospital.setDoctorAvailability(doctorName, status);
+        
+        JOptionPane.showMessageDialog(this,
+                "Your availability has been updated to: " + status,
+                "Status Updated",
+                JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void updatePatientList() {
@@ -248,8 +251,6 @@ public class DoctorForm extends JFrame {
                     JOptionPane.ERROR_MESSAGE);
         }
     }
-
-
 
     private void exportPatientList() {
         JFileChooser chooser = new JFileChooser();
