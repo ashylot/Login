@@ -19,12 +19,10 @@ public class Patient extends Person {
     }
 
 	public void setVisible1(boolean b) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	public void setVisible(boolean b) {
-		// TODO Auto-generated method stub
 		
 	}
 }
