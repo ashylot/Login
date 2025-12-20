@@ -34,7 +34,7 @@ public class Login {
         users.add(new User("Patient2", "patient2", "Patient"));
        
         JFrame frame = new JFrame("Hospital Login");
-        frame.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\Owner\\eclipse-workspace\\HospitalManagementSystem\\image\\Hospital.png."));
+        frame.setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\ado\\eclipse-workspace\\HOSPITALMANAGEMENTSYSTEM\\src\\image\\hospital.png."));
         frame.setSize(450, 290);
         frame.getContentPane().setLayout(null);
         frame.setLocationRelativeTo(null);
