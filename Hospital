@@ -1,184 +1,34 @@
 package HospitalManagementSystem;
 
-import javax.swing.*;
-import java.awt.*;
-import java.io.FileWriter;
-import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
 
-public class Hospital extends JFrame {
+public class Hospital {
+    public static ArrayList<Doctor> doctors = new ArrayList<>();
+    public static ArrayList<Patient> patients = new ArrayList<>();
+    public static ArrayList<Appointment> appointments = new ArrayList<>();
+    
+    
+    private static HashMap<String, String> doctorAvailability = new HashMap<>();
 
-    private static final long serialVersionUID = 1L;
-    private JTextField txtDoctorName, txtPatientName, txtDate, txtTime;
-    private JTextArea txtAppointmentList;
-
-    public Hospital() {
-    	setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\USER-PC\\Downloads\\HospitalLogo.png.png"));
-        setTitle("Hospital Management System");
-        setSize(500, 500);
-        getContentPane().setLayout(null);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-
-        // Doctor input
-        JLabel lblDoctor = new JLabel("Doctor Name:");
-        lblDoctor.setBounds(30, 30, 100, 25);
-        getContentPane().add(lblDoctor);
-
-        txtDoctorName = new JTextField();
-        txtDoctorName.setBounds(140, 30, 200, 25);
-        getContentPane().add(txtDoctorName);
-
-        // Patient input
-        JLabel lblPatient = new JLabel("Patient Name:");
-        lblPatient.setBounds(30, 70, 100, 25);
-        getContentPane().add(lblPatient);
-
-        txtPatientName = new JTextField();
-        txtPatientName.setBounds(140, 70, 200, 25);
-        getContentPane().add(txtPatientName);
-
-        // Appointment date
-        JLabel lblDate = new JLabel("Date:");
-        lblDate.setBounds(30, 110, 100, 25);
-        getContentPane().add(lblDate);
-
-        txtDate = new JTextField();
-        txtDate.setBounds(140, 110, 200, 25);
-        getContentPane().add(txtDate);
-
-        // Appointment time
-        JLabel lblTime = new JLabel("Time:");
-        lblTime.setBounds(30, 145, 100, 25);
-        getContentPane().add(lblTime);
-
-        txtTime = new JTextField();
-        txtTime.setBounds(140, 145, 200, 25);
-        getContentPane().add(txtTime);
-
-        JButton btnAddAppointment = new JButton("Add Appointment");
-        btnAddAppointment.setBounds(140, 185, 180, 30);
-        getContentPane().add(btnAddAppointment);
-
-        btnAddAppointment.addActionListener(e -> addAppointment());
-
-        // Export to File button
-        JButton btnExportPDF = new JButton("Export to File");
-        btnExportPDF.setBounds(330, 185, 130, 30);
-        getContentPane().add(btnExportPDF);
-
-        btnExportPDF.addActionListener(e -> exportToPDF());
-
-        // Appointment list display
-        JLabel lblAppointments = new JLabel("Appointments:");
-        lblAppointments.setBounds(30, 235, 150, 25);
-        getContentPane().add(lblAppointments);
-
-        txtAppointmentList = new JTextArea();
-        txtAppointmentList.setEditable(false);
-        txtAppointmentList.setFont(new Font("Monospaced", Font.PLAIN, 12));
-        
-        JScrollPane scrollPane = new JScrollPane(txtAppointmentList);
-        scrollPane.setBounds(30, 265, 430, 200);
-        getContentPane().add(scrollPane);
+    public static void addDoctor(Doctor d) {
+        doctors.add(d);
     }
 
-    private void addAppointment() {
-        String doctorName = txtDoctorName.getText();
-        String patientName = txtPatientName.getText();
-        String date = txtDate.getText();
-        String time = txtTime.getText();
-
-        if (doctorName.isEmpty() || patientName.isEmpty() || date.isEmpty() || time.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please fill all fields", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        // Create and add doctor, patient, appointment
-        Doctor d = new Doctor("D" + (HospitalSystemClass.doctors.size() + 1), doctorName, "General");
-        Patient p = new Patient("P" + (HospitalSystemClass.patients.size() + 1), patientName, 25);
-
-        HospitalSystemClass.addDoctor(d);
-        HospitalSystemClass.addPatient(p);
-        HospitalSystemClass.addAppointment(new Appointment(d, p, date + " " + time));
-
-        JOptionPane.showMessageDialog(this, "Appointment added:\n" + p.getName() + " with Dr. " + d.getName() + " on " + date + " at " + time);
-
-        // Clear fields after adding
-        txtDoctorName.setText("");
-        txtPatientName.setText("");
-        txtDate.setText("");
-        txtTime.setText("");
-
-        // Update appointment list display
-        updateAppointmentList();
+    public static void addPatient(Patient p) {
+        patients.add(p);
     }
 
-    private void updateAppointmentList() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("All Appointments:\n");
-        sb.append("=".repeat(60)).append("\n");
-        
-        for (int i = 0; i < HospitalSystemClass.appointments.size(); i++) {
-            Appointment apt = HospitalSystemClass.appointments.get(i);
-            sb.append((i + 1)).append(". ");
-            sb.append("Patient: ").append(apt.getPatient().getName());
-            sb.append(" | Doctor: Dr. ").append(apt.getDoctor().getName());
-            sb.append(" | DateTime: ").append(apt.getDate());
-            sb.append("\n");
-        }
-        
-        txtAppointmentList.setText(sb.toString());
+    public static void addAppointment(Appointment a) {
+        appointments.add(a);
+    }
+    
+    
+    public static void setDoctorAvailability(String doctorName, String status) {
+        doctorAvailability.put(doctorName.toLowerCase(), status);
     }
 
-    private void exportToPDF() {
-        if (HospitalSystemClass.appointments.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "No appointments to export!", "Warning", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        try {
-            // Let user choose save location
-            JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setDialogTitle("Save Appointments File");
-            fileChooser.setSelectedFile(new java.io.File("Appointments.txt"));
-            
-            int userSelection = fileChooser.showSaveDialog(this);
-            
-            if (userSelection == JFileChooser.APPROVE_OPTION) {
-                String filePath = fileChooser.getSelectedFile().getAbsolutePath();
-                if (!filePath.endsWith(".txt")) {
-                    filePath += ".txt";
-                }
-
-                // Write to text file
-                PrintWriter writer = new PrintWriter(new FileWriter(filePath));
-                writer.println("========================================");
-                writer.println("   HOSPITAL APPOINTMENTS REPORT");
-                writer.println("========================================");
-                writer.println();
-
-                for (int i = 0; i < HospitalSystemClass.appointments.size(); i++) {
-                    Appointment apt = HospitalSystemClass.appointments.get(i);
-                    writer.println((i + 1) + ". Patient: " + apt.getPatient().getName());
-                    writer.println("   Doctor: Dr. " + apt.getDoctor().getName());
-                    writer.println("   Date & Time: " + apt.getDate());
-                    writer.println();
-                }
-
-                writer.println("========================================");
-                writer.println("Total Appointments: " + HospitalSystemClass.appointments.size());
-                writer.close();
-
-                JOptionPane.showMessageDialog(this, "File exported successfully to:\n" + filePath, 
-                                            "Success", JOptionPane.INFORMATION_MESSAGE);
-            }
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Error exporting file: " + ex.getMessage(), 
-                                        "Error", JOptionPane.ERROR_MESSAGE);
-            ex.printStackTrace();
-        }
-    }
-
-    public static void main(String[] args) {
-        new Hospital().setVisible(true);
+    public static String getDoctorAvailability(String doctorName) {
+        return doctorAvailability.get(doctorName.toLowerCase());
     }
 }
