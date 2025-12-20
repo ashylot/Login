@@ -1,4 +1,4 @@
-package hospi;
+package HospitalManagementSystem;
 
 public class Appointment {
 
