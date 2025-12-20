@@ -5,7 +5,7 @@ public class Appointment {
     private Doctor doctor;
     private Patient patient;
     private String date;
-    private String status; // NEW
+    private String status; 
 
     public Appointment(Doctor doctor, Patient patient, String date) {
         this.doctor = doctor;
