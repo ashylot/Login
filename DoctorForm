@@ -28,8 +28,7 @@ public class DoctorForm extends JFrame {
     private ArrayList<Integer> doneAppointments = new ArrayList<>();
 
     public DoctorForm(String username) {
-        setIconImage(Toolkit.getDefaultToolkit().getImage(
-                "C:\\Users\\USER-PC\\Downloads\\HospitalLogo.png.png"));
+    	setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\ado\\eclipse-workspace\\HOSPITALMANAGEMENTSYSTEM\\src\\image\\hospital.png."));
         this.doctorName = username;
 
         setTitle("Doctor Portal - Dr. " + username);
@@ -135,15 +134,15 @@ public class DoctorForm extends JFrame {
         lblPatients.setBounds(20, 0, 400, 35);
         appointmentsPanel.add(lblPatients);
 
-        JButton btnRefresh = new JButton("Refresh");
+        
         JButton btnDone = new JButton("Mark as Done");
         JButton btnExport = new JButton("Export");
 
-        btnRefresh.setBounds(20, 45, 120, 35);
-        btnDone.setBounds(150, 45, 150, 35);
-        btnExport.setBounds(310, 45, 120, 35);
+        
+        btnDone.setBounds(40, 45, 150, 35);
+        btnExport.setBounds(250, 45, 120, 35);
 
-        JButton[] buttons = {btnRefresh, btnDone, btnExport};
+        JButton[] buttons = {btnDone, btnExport};
         for (JButton b : buttons) {
             b.setFont(new Font("Tahoma", Font.BOLD, 13));
             b.setBackground(headerColor);
@@ -152,7 +151,7 @@ public class DoctorForm extends JFrame {
             appointmentsPanel.add(b);
         }
 
-        btnRefresh.addActionListener(e -> updatePatientList());
+        
         btnDone.addActionListener(e -> markAsDone());
         btnExport.addActionListener(e -> exportPatientList());  // FIXED: Changed from exportToPDF()
 
