@@ -27,9 +27,9 @@ public class Login {
     public static void main(String[] args) {
 
         // Sample pre-registered users
-        users.add(new User("Ash", "123456", "Doctor"));
-        users.add(new User("Triciajane", "654321", "Doctor"));
-        users.add(new User("Jean", "7890", "Doctor"));
+        users.add(new User("Ash", "ash", "Doctor"));
+        users.add(new User("Tricia", "tricia", "Doctor"));
+        users.add(new User("Jean", "jean", "Doctor"));
         users.add(new User("Patient1", "patient1", "Patient"));
         users.add(new User("Patient2", "patient2", "Patient"));
        
