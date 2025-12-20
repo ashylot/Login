@@ -2,219 +2,329 @@ package HospitalManagementSystem;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.FileWriter;
-import java.io.PrintWriter;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
 
 public class DoctorForm extends JFrame {
 
     private static final long serialVersionUID = 1L;
+
     private JTextArea txtPatientList;
     private JComboBox<String> cmbAvailability;
     private JLabel lblStatus;
     private String doctorName;
 
+    private ArrayList<Integer> doneAppointments = new ArrayList<>();
+
     public DoctorForm(String username) {
+        setIconImage(Toolkit.getDefaultToolkit().getImage(
+                "C:\\Users\\USER-PC\\Downloads\\HospitalLogo.png.png"));
         this.doctorName = username;
-        
+
         setTitle("Doctor Portal - Dr. " + username);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setSize(600, 600);
-        getContentPane().setLayout(null);
+        setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+        getContentPane().setLayout(null);
 
-        // Welcome message
+        // ===== THEME COLORS (same as PatientForm) =====
+        Color headerColor = new Color(0, 102, 204);
+        Color panelColor = Color.WHITE;
+        Color accentColor = new Color(46, 204, 113);
+        Color dangerColor = new Color(231, 76, 60);
+        Color textColor = new Color(44, 62, 80);
+
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int screenWidth = screenSize.width;
+        int screenHeight = screenSize.height;
+        int leftMargin = 50;
+
+        getContentPane().setBackground(new Color(240, 248, 255));
+
+        // ===== HEADER PANEL =====
+        JPanel headerPanel = new JPanel(null);
+        headerPanel.setBackground(headerColor);
+        headerPanel.setBounds(0, 0, screenWidth, 80);
+        getContentPane().add(headerPanel);
+
         JLabel lblWelcome = new JLabel("Welcome, Dr. " + username + "!");
-        lblWelcome.setFont(new Font("Tahoma", Font.BOLD, 16));
-        lblWelcome.setBounds(30, 10, 400, 30);
-        getContentPane().add(lblWelcome);
+        lblWelcome.setFont(new Font("Tahoma", Font.BOLD, 24));
+        lblWelcome.setForeground(Color.WHITE);
+        lblWelcome.setBounds(leftMargin, 20, 600, 40);
+        headerPanel.add(lblWelcome);
 
-        // Logout button
         JButton btnLogout = new JButton("Logout");
-        btnLogout.setBounds(480, 10, 90, 30);
-        getContentPane().add(btnLogout);
+        btnLogout.setFont(new Font("Tahoma", Font.BOLD, 14));
+        btnLogout.setBackground(dangerColor);
+        btnLogout.setForeground(Color.WHITE);
+        btnLogout.setFocusPainted(false);
+        btnLogout.setBounds(screenWidth - 170, 25, 120, 35);
+        headerPanel.add(btnLogout);
         btnLogout.addActionListener(e -> logout());
 
-        // Availability Section
-        JLabel lblAvailabilityTitle = new JLabel("Set Your Availability");
-        lblAvailabilityTitle.setFont(new Font("Tahoma", Font.BOLD, 14));
-        lblAvailabilityTitle.setBounds(30, 50, 250, 25);
-        getContentPane().add(lblAvailabilityTitle);
+        // ===== STATUS / AVAILABILITY PANEL =====
+        JPanel statusPanel = new JPanel(null);
+        statusPanel.setBackground(panelColor);
+        statusPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(189, 195, 199), 2),
+                BorderFactory.createEmptyBorder(20, 20, 20, 20)
+        ));
+        statusPanel.setBounds(leftMargin, 95, screenWidth - 2 * leftMargin, 160);
+        getContentPane().add(statusPanel);
+
+        JLabel lblAvailabilityTitle = new JLabel("Doctor Availability");
+        lblAvailabilityTitle.setFont(new Font("Tahoma", Font.BOLD, 18));
+        lblAvailabilityTitle.setForeground(headerColor);
+        lblAvailabilityTitle.setBounds(20, 0, 300, 35);
+        statusPanel.add(lblAvailabilityTitle);
 
         JLabel lblAvailability = new JLabel("Status:");
-        lblAvailability.setBounds(30, 85, 100, 25);
-        getContentPane().add(lblAvailability);
+        lblAvailability.setFont(new Font("Tahoma", Font.PLAIN, 14));
+        lblAvailability.setForeground(textColor);
+        lblAvailability.setBounds(20, 50, 150, 30);
+        statusPanel.add(lblAvailability);
 
         String[] availabilityOptions = {"Available", "Busy", "Off Duty", "On Call"};
         cmbAvailability = new JComboBox<>(availabilityOptions);
-        cmbAvailability.setBounds(140, 85, 200, 25);
-        getContentPane().add(cmbAvailability);
+        cmbAvailability.setFont(new Font("Tahoma", Font.PLAIN, 14));
+        cmbAvailability.setBounds(170, 50, 250, 35);
+        statusPanel.add(cmbAvailability);
 
         JButton btnUpdateStatus = new JButton("Update Status");
-        btnUpdateStatus.setBounds(350, 85, 150, 25);
-        getContentPane().add(btnUpdateStatus);
+        btnUpdateStatus.setFont(new Font("Tahoma", Font.BOLD, 14));
+        btnUpdateStatus.setBackground(accentColor);
+        btnUpdateStatus.setForeground(Color.WHITE);
+        btnUpdateStatus.setBounds(440, 50, 160, 35);
+        statusPanel.add(btnUpdateStatus);
         btnUpdateStatus.addActionListener(e -> updateAvailability());
 
         lblStatus = new JLabel("Current Status: Available");
-        lblStatus.setFont(new Font("Tahoma", Font.BOLD, 12));
+        lblStatus.setFont(new Font("Tahoma", Font.BOLD, 14));
         lblStatus.setForeground(new Color(0, 128, 0));
-        lblStatus.setBounds(30, 120, 300, 25);
-        getContentPane().add(lblStatus);
+        lblStatus.setBounds(20, 100, 400, 30);
+        statusPanel.add(lblStatus);
 
-        // Statistics Panel
-        JPanel statsPanel = new JPanel();
-        statsPanel.setBackground(new Color(240, 248, 255));
-        statsPanel.setBorder(BorderFactory.createTitledBorder("Today's Statistics"));
-        statsPanel.setBounds(30, 160, 530, 80);
-        statsPanel.setLayout(null);
-        getContentPane().add(statsPanel);
+        // ===== APPOINTMENTS PANEL =====
+        JPanel appointmentsPanel = new JPanel(null);
+        appointmentsPanel.setBackground(panelColor);
+        appointmentsPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(189, 195, 199), 2),
+                BorderFactory.createEmptyBorder(20, 20, 20, 20)
+        ));
 
-        JLabel lblTotalPatients = new JLabel("Total Appointments: 0");
-        lblTotalPatients.setFont(new Font("Tahoma", Font.PLAIN, 12));
-        lblTotalPatients.setBounds(20, 25, 200, 20);
-        statsPanel.add(lblTotalPatients);
+        int appointmentsPanelHeight = screenHeight - 320;
+        appointmentsPanel.setBounds(leftMargin, 270,
+                screenWidth - 2 * leftMargin, appointmentsPanelHeight);
+        getContentPane().add(appointmentsPanel);
 
-        JLabel lblPendingPatients = new JLabel("Today's Patients: 0");
-        lblPendingPatients.setFont(new Font("Tahoma", Font.PLAIN, 12));
-        lblPendingPatients.setBounds(20, 50, 200, 20);
-        statsPanel.add(lblPendingPatients);
-
-        // Patient List Section
-        JLabel lblPatients = new JLabel("Your Patients & Appointments:");
-        lblPatients.setFont(new Font("Tahoma", Font.BOLD, 14));
-        lblPatients.setBounds(30, 260, 300, 25);
-        getContentPane().add(lblPatients);
+        JLabel lblPatients = new JLabel("Your Patients & Appointments");
+        lblPatients.setFont(new Font("Tahoma", Font.BOLD, 18));
+        lblPatients.setForeground(headerColor);
+        lblPatients.setBounds(20, 0, 400, 35);
+        appointmentsPanel.add(lblPatients);
 
         JButton btnRefresh = new JButton("Refresh");
-        btnRefresh.setBounds(380, 260, 100, 25);
-        getContentPane().add(btnRefresh);
-        btnRefresh.addActionListener(e -> updatePatientList());
-
+        JButton btnDone = new JButton("Mark as Done");
         JButton btnExport = new JButton("Export");
-        btnExport.setBounds(490, 260, 70, 25);
-        getContentPane().add(btnExport);
-        btnExport.addActionListener(e -> exportPatientList());
+
+        btnRefresh.setBounds(20, 45, 120, 35);
+        btnDone.setBounds(150, 45, 150, 35);
+        btnExport.setBounds(310, 45, 120, 35);
+
+        JButton[] buttons = {btnRefresh, btnDone, btnExport};
+        for (JButton b : buttons) {
+            b.setFont(new Font("Tahoma", Font.BOLD, 13));
+            b.setBackground(headerColor);
+            b.setForeground(Color.WHITE);
+            b.setFocusPainted(false);
+            appointmentsPanel.add(b);
+        }
+
+        btnRefresh.addActionListener(e -> updatePatientList());
+        btnDone.addActionListener(e -> markAsDone());
+        btnExport.addActionListener(e -> exportToPDF());
 
         txtPatientList = new JTextArea();
         txtPatientList.setEditable(false);
-        txtPatientList.setFont(new Font("Monospaced", Font.PLAIN, 11));
-        
-        JScrollPane scrollPane = new JScrollPane(txtPatientList);
-        scrollPane.setBounds(30, 295, 530, 250);
-        getContentPane().add(scrollPane);
+        txtPatientList.setFont(new Font("Monospaced", Font.PLAIN, 14));
+        txtPatientList.setBackground(new Color(248, 249, 250));
+        txtPatientList.setForeground(textColor);
+        txtPatientList.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Load patient list
+        JScrollPane scrollPane = new JScrollPane(txtPatientList);
+        scrollPane.setBounds(20, 90,
+                screenWidth - 2 * leftMargin - 80,
+                appointmentsPanelHeight - 120);
+        appointmentsPanel.add(scrollPane);
+
         updatePatientList();
     }
 
-    private void updateAvailability() {
+    private Object exportToPDF() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private void updateAvailability() {
         String status = (String) cmbAvailability.getSelectedItem();
         lblStatus.setText("Current Status: " + status);
-        
-        // Set color based on status
-        switch (status) {
-            case "Available":
-                lblStatus.setForeground(new Color(0, 128, 0));
-                break;
-            case "Busy":
-                lblStatus.setForeground(new Color(255, 140, 0));
-                break;
-            case "Off Duty":
-                lblStatus.setForeground(new Color(255, 0, 0));
-                break;
-            case "On Call":
-                lblStatus.setForeground(new Color(0, 0, 255));
-                break;
-        }
-        
-        JOptionPane.showMessageDialog(this, 
-            "Your availability status has been updated to: " + status,
-            "Status Updated", 
-            JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void updatePatientList() {
         StringBuilder sb = new StringBuilder();
-        sb.append("PATIENTS SCHEDULED WITH DR. ").append(doctorName.toUpperCase()).append("\n");
-        sb.append("=".repeat(70)).append("\n\n");
-        
+        sb.append("PATIENTS SCHEDULED WITH DR. ")
+                .append(doctorName.toUpperCase()).append("\n");
+
+        // Replace String.repeat with a loop for Java 8 compatibility
+        for (int i = 0; i < 70; i++) {
+            sb.append("=");
+        }
+        sb.append("\n\n");
+
         int count = 0;
-        for (int i = 0; i < HospitalSystemClass.appointments.size(); i++) {
-            Appointment apt = HospitalSystemClass.appointments.get(i);
-            
+        int index = 0;
+
+        for (Appointment apt : Hospital.appointments) {
             if (apt.getDoctor().getName().equalsIgnoreCase(doctorName)) {
                 count++;
-                sb.append(count).append(". Patient: ").append(apt.getPatient().getName()).append("\n");
-                sb.append("   Patient ID: ").append(apt.getPatient().getId()).append("\n");
-                sb.append("   Appointment: ").append(apt.getDate()).append("\n");
-                sb.append("   ").append("-".repeat(60)).append("\n");
+                sb.append(count).append(". Patient: ")
+                        .append(apt.getPatient().getName());
+
+                if (doneAppointments.contains(index)) {
+                    sb.append("  [DONE]");
+                }
+
+                sb.append("\n   Appointment: ")
+                        .append(apt.getDate()).append("\n");
+
+                // Replace String.repeat with a loop for Java 8 compatibility
+                sb.append("   ");
+                for (int i = 0; i < 60; i++) {
+                    sb.append("-");
+                }
+                sb.append("\n");
             }
+            index++;
         }
-        
+
         if (count == 0) {
             sb.append("No patients scheduled yet.\n");
-            sb.append("Waiting for appointments...\n");
-        } else {
-            sb.append("\n").append("=".repeat(70)).append("\n");
-            sb.append("TOTAL PATIENTS: ").append(count).append("\n");
         }
-        
+
         txtPatientList.setText(sb.toString());
     }
 
-    private void exportPatientList() {
+    private void markAsDone() {
+        String input = JOptionPane.showInputDialog(
+                this,
+                "Enter appointment number to mark as DONE:",
+                "Mark Appointment Done",
+                JOptionPane.QUESTION_MESSAGE);
+
+        if (input == null) return;
+
         try {
-            JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setDialogTitle("Export Patient List");
-            fileChooser.setSelectedFile(new java.io.File("Dr_" + doctorName + "_Patients.txt"));
-            
-            int userSelection = fileChooser.showSaveDialog(this);
-            
-            if (userSelection == JFileChooser.APPROVE_OPTION) {
-                String filePath = fileChooser.getSelectedFile().getAbsolutePath();
-                if (!filePath.endsWith(".txt")) {
-                    filePath += ".txt";
-                }
-
-                PrintWriter writer = new PrintWriter(new FileWriter(filePath));
-                writer.println("========================================");
-                writer.println("   PATIENT LIST - DR. " + doctorName.toUpperCase());
-                writer.println("========================================");
-                writer.println();
-
-                int count = 0;
-                for (int i = 0; i < HospitalSystemClass.appointments.size(); i++) {
-                    Appointment apt = HospitalSystemClass.appointments.get(i);
-                    if (apt.getDoctor().getName().equalsIgnoreCase(doctorName)) {
-                        count++;
-                        writer.println(count + ". Patient: " + apt.getPatient().getName());
-                        writer.println("   Patient ID: " + apt.getPatient().getId());
-                        writer.println("   Appointment: " + apt.getDate());
-                        writer.println();
-                    }
-                }
-
-                writer.println("========================================");
-                writer.println("Total Patients: " + count);
-                writer.close();
-
-                JOptionPane.showMessageDialog(this, "Patient list exported successfully!", 
-                                            "Success", JOptionPane.INFORMATION_MESSAGE);
+            int number = Integer.parseInt(input) - 1;
+            if (!doneAppointments.contains(number)) {
+                doneAppointments.add(number);
+                updatePatientList();
             }
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Error exporting file: " + ex.getMessage(), 
-                                        "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                    "Invalid appointment number",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+
+
+    private void exportPatientList() {
+        JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle("Export Patient List to PDF");
+        chooser.setSelectedFile(new File("Dr_" + doctorName + "_Patients.pdf"));
+
+        if (chooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION) {
+            return;
+        }
+
+        String reportText = txtPatientList.getText();
+
+        try (PDDocument doc = new PDDocument()) {
+
+            PDType1Font font = new PDType1Font(Standard14Fonts.FontName.COURIER);
+            float fontSize = 10;
+            float leading = 1.2f * fontSize;
+            float margin = 50;
+
+            String[] lines = reportText.split("\n");
+
+            PDPage page = new PDPage(PDRectangle.LETTER);
+            doc.addPage(page);
+
+            PDPageContentStream cs = new PDPageContentStream(doc, page);
+            cs.beginText();
+            cs.setFont(font, fontSize);
+
+            float y = PDRectangle.LETTER.getHeight() - margin;
+            cs.newLineAtOffset(margin, y);
+
+            for (String line : lines) {
+
+                // Create new page if space is full
+                if (y < margin) {
+                    cs.endText();
+                    cs.close();
+
+                    page = new PDPage(PDRectangle.LETTER);
+                    doc.addPage(page);
+
+                    cs = new PDPageContentStream(doc, page);
+                    cs.beginText();
+                    cs.setFont(font, fontSize);
+
+                    y = PDRectangle.LETTER.getHeight() - margin;
+                    cs.newLineAtOffset(margin, y);
+                }
+
+                cs.showText(line);
+                cs.newLineAtOffset(0, -leading);
+                y -= leading;
+            }
+
+            cs.endText();
+            cs.close();
+
+            doc.save(chooser.getSelectedFile());
+
+            JOptionPane.showMessageDialog(this,
+                    "Patient list exported successfully!",
+                    "PDF Export",
+                    JOptionPane.INFORMATION_MESSAGE);
+
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this,
+                    "PDF Error: " + e.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void logout() {
-        int confirm = JOptionPane.showConfirmDialog(this, 
-            "Are you sure you want to logout?", 
-            "Logout", 
-            JOptionPane.YES_NO_OPTION);
-        
-        if (confirm == JOptionPane.YES_OPTION) {
-            this.dispose();
-            Login.main(null); // Return to login
-        }
+        dispose();
+        Login.main(null);
     }
 
     public static void main(String[] args) {
