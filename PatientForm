@@ -14,6 +14,7 @@ public class PatientForm extends JFrame {
     private JComboBox<String> cmbMonth;
     private JComboBox<String> cmbIllness; 
     private JTextField txtTime;
+    private JTextField txtPatientName;  // NEW: Patient name field
     private JTextArea txtAppointmentList;
     private String patientName;
 
@@ -70,7 +71,7 @@ public class PatientForm extends JFrame {
             BorderFactory.createEmptyBorder(20, 20, 20, 20)
         ));
         bookingPanel.setLayout(null);
-        bookingPanel.setBounds(50, 95, 1180, 278);
+        bookingPanel.setBounds(50, 95, 1180, 320);  // CHANGED: Increased height from 278 to 320
         getContentPane().add(bookingPanel);
 
         // Book Appointment Section
@@ -80,21 +81,55 @@ public class PatientForm extends JFrame {
         lblBooking.setBounds(20, 0, 400, 35);
         bookingPanel.add(lblBooking);
 
-        // Doctor input
+        // NEW: Patient Name input
+        JLabel lblPatientName = new JLabel("Patient Name:");
+        lblPatientName.setFont(new Font("Tahoma", Font.PLAIN, 14));
+        lblPatientName.setForeground(textColor);
+        lblPatientName.setBounds(20, 46, labelWidth, 30);
+        bookingPanel.add(lblPatientName);
+
+        txtPatientName = new JTextField();
+        txtPatientName.setFont(new Font("Tahoma", Font.PLAIN, 14));
+        txtPatientName.setBounds(170, 46, 400, 35);
+        txtPatientName.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(189, 195, 199), 1),
+            BorderFactory.createEmptyBorder(5, 10, 5, 10)
+        ));
+        bookingPanel.add(txtPatientName);
+
+        // Doctor input - CHANGED: Y position from 46 to 87
         JLabel lblDoctor = new JLabel("Doctor Name:");
         lblDoctor.setFont(new Font("Tahoma", Font.PLAIN, 14));
         lblDoctor.setForeground(textColor);
-        lblDoctor.setBounds(20, 46, labelWidth, 30);
+        lblDoctor.setBounds(20, 87, labelWidth, 30);
         bookingPanel.add(lblDoctor);
 
-        // Dropdown for doctor selection
+        // Dropdown for doctor selection - CHANGED: Y position from 46 to 87
         String[] doctors = {"Dr. Ash (Pediatricians)", "Dr. Triciajane (Cardiologist)", "Dr. Jean (Ophthalmologist)"};
         cmbDoctorName = new JComboBox<>(doctors);
         cmbDoctorName.setEditable(true);
         cmbDoctorName.setFont(new Font("Tahoma", Font.PLAIN, 14));
         cmbDoctorName.setBackground(Color.WHITE);
-        cmbDoctorName.setBounds(170, 46, 400, 35);
+        cmbDoctorName.setBounds(170, 87, 400, 35);
         bookingPanel.add(cmbDoctorName);
+
+        // NEW: Button to check doctor availability
+        JButton btnCheckAvailability = new JButton("Check Availability");
+        btnCheckAvailability.setFont(new Font("Tahoma", Font.BOLD, 12));
+        btnCheckAvailability.setBackground(new Color(52, 152, 219));
+        btnCheckAvailability.setForeground(Color.WHITE);
+        btnCheckAvailability.setFocusPainted(false);
+        btnCheckAvailability.setBounds(580, 87, 160, 35);
+        btnCheckAvailability.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        bookingPanel.add(btnCheckAvailability);
+        btnCheckAvailability.addActionListener(e -> checkDoctorAvailability());
+
+        // Patient Illness - CHANGED: Y position from 87 to 128
+        JLabel lblPatientIllness = new JLabel("Patient Illness:");
+        lblPatientIllness.setForeground(new Color(44, 62, 80));
+        lblPatientIllness.setFont(new Font("Tahoma", Font.PLAIN, 14));
+        lblPatientIllness.setBounds(20, 128, 150, 30);
+        bookingPanel.add(lblPatientIllness);
 
         String[] illnesses = {
                 "Fever / Flu",
@@ -104,17 +139,17 @@ public class PatientForm extends JFrame {
         
         cmbIllness = new JComboBox<>(illnesses);
         cmbIllness.setFont(new Font("Tahoma", Font.PLAIN, 14));
-        cmbIllness.setBounds(170, 87, 300, 35);
+        cmbIllness.setBounds(170, 128, 300, 35);
         bookingPanel.add(cmbIllness);
 
-        // Date input with dropdown selectors
+        // Date input with dropdown selectors - CHANGED: Y position from 135 to 176
         JLabel lblDate = new JLabel("Appointment Date:");
         lblDate.setFont(new Font("Tahoma", Font.PLAIN, 14));
         lblDate.setForeground(textColor);
-        lblDate.setBounds(20, 135, labelWidth, 30);
+        lblDate.setBounds(20, 176, labelWidth, 30);
         bookingPanel.add(lblDate);
 
-        // Year dropdown
+        // Year dropdown - CHANGED: Y position from 133 to 174
         Calendar cal = Calendar.getInstance();
         int currentYear = cal.get(Calendar.YEAR);
         Integer[] years = new Integer[10];
@@ -124,20 +159,20 @@ public class PatientForm extends JFrame {
         cmbYear = new JComboBox<>(years);
         cmbYear.setFont(new Font("Tahoma", Font.PLAIN, 14));
         cmbYear.setBackground(Color.WHITE);
-        cmbYear.setBounds(170, 133, 120, 35);
+        cmbYear.setBounds(170, 174, 120, 35);
         bookingPanel.add(cmbYear);
 
-        // Month dropdown
+        // Month dropdown - CHANGED: Y position from 133 to 174
         String[] months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", 
                           "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
         cmbMonth = new JComboBox<>(months);
         cmbMonth.setFont(new Font("Tahoma", Font.PLAIN, 14));
         cmbMonth.setBackground(Color.WHITE);
-        cmbMonth.setBounds(300, 133, 100, 35);
+        cmbMonth.setBounds(300, 174, 100, 35);
         cmbMonth.setSelectedIndex(cal.get(Calendar.MONTH));
         bookingPanel.add(cmbMonth);
 
-        // Day dropdown
+        // Day dropdown - CHANGED: Y position from 133 to 174
         Integer[] days = new Integer[31];
         for (int i = 0; i < 31; i++) {
             days[i] = i + 1;
@@ -145,7 +180,7 @@ public class PatientForm extends JFrame {
         cmbDay = new JComboBox<>(days);
         cmbDay.setFont(new Font("Tahoma", Font.PLAIN, 14));
         cmbDay.setBackground(Color.WHITE);
-        cmbDay.setBounds(410, 133, 80, 35);
+        cmbDay.setBounds(410, 174, 80, 35);
         cmbDay.setSelectedIndex(cal.get(Calendar.DAY_OF_MONTH) - 1);
         bookingPanel.add(cmbDay);
 
@@ -153,16 +188,16 @@ public class PatientForm extends JFrame {
         cmbMonth.addActionListener(e -> updateDays());
         cmbYear.addActionListener(e -> updateDays());
 
-        // Time input
+        // Time input - CHANGED: Y position from 183 to 224
         JLabel lblTime = new JLabel("Appointment Time:");
         lblTime.setFont(new Font("Tahoma", Font.PLAIN, 14));
         lblTime.setForeground(textColor);
-        lblTime.setBounds(20, 183, labelWidth, 30);
+        lblTime.setBounds(20, 224, labelWidth, 30);
         bookingPanel.add(lblTime);
 
         txtTime = new JTextField();
         txtTime.setFont(new Font("Tahoma", Font.PLAIN, 14));
-        txtTime.setBounds(170, 181, 300, 35);
+        txtTime.setBounds(170, 222, 300, 35);
         txtTime.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(new Color(189, 195, 199), 1),
             BorderFactory.createEmptyBorder(5, 10, 5, 10)
@@ -170,13 +205,14 @@ public class PatientForm extends JFrame {
         txtTime.setToolTipText("Format: HH:MM (e.g., 14:30)");
         bookingPanel.add(txtTime);
 
+        // Book Appointment Button - CHANGED: Y position from 227 to 268
         JButton btnBookAppointment = new JButton("Book Appointment");
         btnBookAppointment.setFont(new Font("Tahoma", Font.BOLD, 14));
         btnBookAppointment.setBackground(accentColor);
         btnBookAppointment.setForeground(Color.WHITE);
         btnBookAppointment.setFocusPainted(false);
         btnBookAppointment.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-        btnBookAppointment.setBounds(170, 227, 180, 40);
+        btnBookAppointment.setBounds(170, 268, 180, 40);
         btnBookAppointment.setCursor(new Cursor(Cursor.HAND_CURSOR));
         bookingPanel.add(btnBookAppointment);
 
@@ -193,14 +229,9 @@ public class PatientForm extends JFrame {
         btnLogout.setCursor(new Cursor(Cursor.HAND_CURSOR));
         bookingPanel.add(btnLogout);
         
-        JLabel lblPatientIllness = new JLabel("Patient Illness:");
-        lblPatientIllness.setForeground(new Color(44, 62, 80));
-        lblPatientIllness.setFont(new Font("Tahoma", Font.PLAIN, 14));
-        lblPatientIllness.setBounds(20, 87, 150, 30);
-        bookingPanel.add(lblPatientIllness);
         btnLogout.addActionListener(e -> logout());
         
-        // Appointments Panel
+        // Appointments Panel - CHANGED: Y position from 380 to 422 (to accommodate larger booking panel)
         JPanel appointmentsPanel = new JPanel();
         appointmentsPanel.setBackground(panelColor);
         appointmentsPanel.setBorder(BorderFactory.createCompoundBorder(
@@ -208,8 +239,8 @@ public class PatientForm extends JFrame {
             BorderFactory.createEmptyBorder(20, 20, 20, 20)
         ));
         appointmentsPanel.setLayout(null);
-        int appointmentsPanelHeight = screenHeight - 450;
-        appointmentsPanel.setBounds(leftMargin, 380, screenWidth - 2 * leftMargin, appointmentsPanelHeight);
+        int appointmentsPanelHeight = screenHeight - 492;  // CHANGED: from 450 to 492
+        appointmentsPanel.setBounds(leftMargin, 422, screenWidth - 2 * leftMargin, appointmentsPanelHeight);
         getContentPane().add(appointmentsPanel);
 
         // My Appointments Section
@@ -263,10 +294,13 @@ public class PatientForm extends JFrame {
     }
 
     private void bookAppointment() {
+        // CHANGED: Get patient name from text field instead of username
+        String bookingPatientName = txtPatientName.getText().trim();
         String doctorName = (String) cmbDoctorName.getSelectedItem();
         String time = txtTime.getText();
 
-        if (doctorName == null || doctorName.isEmpty() || time.isEmpty()) {
+        // CHANGED: Added validation for patient name
+        if (bookingPatientName.isEmpty() || doctorName == null || doctorName.isEmpty() || time.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please fill all fields", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -287,19 +321,20 @@ public class PatientForm extends JFrame {
         }
         cleanDoctorName = cleanDoctorName.replace("Dr. ", "").trim();
 
-        // Create doctor and patient objects
+        // CHANGED: Use the patient name from text field
         Doctor d = new Doctor("D" + (Hospital.doctors.size() + 1), cleanDoctorName, "General");
-        Patient p = new Patient("P" + (Hospital.patients.size() + 1), patientName, 25);
+        Patient p = new Patient("P" + (Hospital.patients.size() + 1), bookingPatientName, 25);
 
         Hospital.addDoctor(d);
         Hospital.addPatient(p);
         Hospital.addAppointment(new Appointment(d, p, date + " " + time));
 
         JOptionPane.showMessageDialog(this, 
-            "Appointment booked successfully!\nWith " + displayName + "\nDate: " + date + " at " + time,
+            "Appointment booked successfully!\nPatient: " + bookingPatientName + "\nWith " + displayName + "\nDate: " + date + " at " + time,
             "Success", JOptionPane.INFORMATION_MESSAGE);
 
-        // Clear fields
+        // CHANGED: Clear patient name field too
+        txtPatientName.setText("");
         cmbDoctorName.setSelectedIndex(0);
         Calendar cal = Calendar.getInstance();
         cmbYear.setSelectedItem(cal.get(Calendar.YEAR));
@@ -313,7 +348,7 @@ public class PatientForm extends JFrame {
 
     private void updateAppointmentList() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Your Appointments:\n");
+        sb.append("All Appointments:\n");
 
         // Replace String.repeat with a loop for Java 8 compatibility
         for (int i = 0; i < 60; i++) {
@@ -324,16 +359,109 @@ public class PatientForm extends JFrame {
         int count = 0;
         for (int i = 0; i < Hospital.appointments.size(); i++) {
             Appointment apt = Hospital.appointments.get(i);
+            
+            // Show all appointments instead of filtering by username
+            count++;
+            sb.append(count).append(". ");
+            sb.append("Patient: ").append(apt.getPatient().getName());
+            sb.append(" | Doctor: Dr. ").append(apt.getDoctor().getName());
+            sb.append(" | DateTime: ").append(apt.getDate());
+            sb.append("\n");
+        }
+        
+        if (count == 0) {
+            sb.append("No appointments scheduled yet.\n");
+        }
+        
+        txtAppointmentList.setText(sb.toString());
+    }
 
-            if (apt.getPatient().getName().equalsIgnoreCase(patientName)) {
-                count++;
-                sb.append(count).append(". ");
-                sb.append("Doctor: Dr. ").append(apt.getDoctor().getName());
-                sb.append(" | DateTime: ").append(apt.getDate());
-                sb.append("\n");
+    private void checkDoctorAvailability() {
+        String selectedDoctor = (String) cmbDoctorName.getSelectedItem();
+        
+        if (selectedDoctor == null || selectedDoctor.isEmpty()) {
+            JOptionPane.showMessageDialog(this, 
+                "Please select a doctor first", 
+                "No Doctor Selected", 
+                JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Extract clean doctor name - remove "Dr. " prefix and specialty
+        String cleanDoctorName = selectedDoctor;
+        if (selectedDoctor.contains("(")) {
+            cleanDoctorName = selectedDoctor.substring(0, selectedDoctor.indexOf("(")).trim();
+        }
+        cleanDoctorName = cleanDoctorName.replace("Dr. ", "").trim();
+        
+        // Map the display names to the actual doctor usernames used in DoctorForm
+        // This ensures the HashMap lookup works correctly
+        String doctorUsername = cleanDoctorName;
+        if (cleanDoctorName.equalsIgnoreCase("Ash")) {
+            doctorUsername = "Ash";
+        } else if (cleanDoctorName.equalsIgnoreCase("Tricia")) {
+            doctorUsername = "Tricia";
+        } else if (cleanDoctorName.equalsIgnoreCase("Jean")) {
+            doctorUsername = "Jean";
+        }
+
+        // Get selected date
+        int year = (Integer) cmbYear.getSelectedItem();
+        int month = cmbMonth.getSelectedIndex() + 1;
+        int day = (Integer) cmbDay.getSelectedItem();
+        String selectedDate = String.format("%04d-%02d-%02d", year, month, day);
+
+        // Get doctor's current availability status using the username
+        String doctorStatus = Hospital.getDoctorAvailability(doctorUsername);
+        if (doctorStatus == null) {
+            doctorStatus = "Available"; // Default status
+        }
+
+        // Check appointments for this doctor on this date
+        StringBuilder appointmentInfo = new StringBuilder();
+        appointmentInfo.append("Doctor: ").append(selectedDoctor).append("\n");
+        appointmentInfo.append("Current Status: ").append(doctorStatus).append("\n");
+        appointmentInfo.append("Date: ").append(selectedDate).append("\n\n");
+        
+        // Show status with appropriate indicator
+        if (doctorStatus.equalsIgnoreCase("Available")) {
+            appointmentInfo.append("✓ Doctor is AVAILABLE\n\n");
+        } else if (doctorStatus.equalsIgnoreCase("Busy")) {
+            appointmentInfo.append("⚠ Doctor is currently BUSY\n\n");
+        } else if (doctorStatus.equalsIgnoreCase("Off Duty")) {
+            appointmentInfo.append("✗ Doctor is OFF DUTY\n\n");
+        } else if (doctorStatus.equalsIgnoreCase("On Call")) {
+            appointmentInfo.append("⚕ Doctor is ON CALL\n\n");
+        }
+        
+        // Show scheduled appointments for this date
+        appointmentInfo.append("Scheduled Appointments on ").append(selectedDate).append(":\n");
+        int appointmentCount = 0;
+        for (Appointment apt : Hospital.appointments) {
+            if (apt.getDoctor().getName().equalsIgnoreCase(cleanDoctorName) && 
+                apt.getDate().startsWith(selectedDate)) {
+                appointmentCount++;
+                appointmentInfo.append("• ").append(apt.getDate()).append(" - ")
+                              .append(apt.getPatient().getName()).append("\n");
             }
         }
-        txtAppointmentList.setText(sb.toString());
+
+        if (appointmentCount == 0) {
+            appointmentInfo.append("No appointments scheduled yet.\n");
+        }
+
+        // Add recommendation based on status
+        appointmentInfo.append("\n");
+        if (doctorStatus.equalsIgnoreCase("Off Duty")) {
+            appointmentInfo.append("⚠ Warning: Doctor is off duty. Please choose another day or doctor.");
+        } else if (doctorStatus.equalsIgnoreCase("Busy")) {
+            appointmentInfo.append("Note: Doctor is busy but you may still book for available time slots.");
+        }
+
+        JOptionPane.showMessageDialog(this, 
+            appointmentInfo.toString(),
+            "Doctor Availability", 
+            JOptionPane.INFORMATION_MESSAGE);
     }
      
     private void logout() {
