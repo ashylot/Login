@@ -19,7 +19,7 @@ public class PatientForm extends JFrame {
     private String patientName;
 
     public PatientForm(String username) {
-    	 setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\Owner\\eclipse-workspace\\HospitalManagementSystem\\image\\Hospital.png."));
+    	 setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\ado\\eclipse-workspace\\HOSPITALMANAGEMENTSYSTEM\\src\\image\\hospital.png."));
         this.patientName = username;
         
         setTitle("Patient Portal - " + username);
